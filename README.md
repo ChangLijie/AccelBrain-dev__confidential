@@ -1,12 +1,12 @@
 # AcclBrain
 
-AcclBrain is a project focused on launching an efficient chatbot by integrating multiple powerful frameworks and tools. The architecture combines OpenWeb UI, Ollama, and Model Handler to ensure seamless operation and optimized performance.
+AcclBrain is a project focused on launching an efficient chatbot by integrating multiple powerful frameworks and tools. The architecture combines ChatBot, Ollama, and Model Handler to ensure seamless operation and optimized performance.
 
 ## The architecture of AcclBrain is designed as follows:
 
 ![](./docs/architecture.svg)
 
-1. **OpenWeb UI**
+1. **ChatBot**
 
    -  Provides the user interaction interface.
 
