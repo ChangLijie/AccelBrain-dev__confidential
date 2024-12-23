@@ -12,4 +12,4 @@ Pipfile
 .webui_secret_key
 *log*
 *models
-*openwebui
+./openwebui/data*
