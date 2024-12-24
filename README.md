@@ -6,15 +6,15 @@ AcclBrain is a project focused on launching an efficient chatbot by integrating 
 
 ![](./docs/architecture.svg)
 
-1. **ChatBot**
+1. [**ChatBot**](https://github.com/open-webui/open-webui)
 
    -  Provides the user interaction interface.
 
-2. **Ollama**
+2. [**Ollama**](https://github.com/ollama/ollama)
 
    -  Handles efficient model requests, managing load distribution and resource allocation.
 
-3. **Model Handler**
+3. [**Model Handler**](https://github.com/ChangLijie/model_handler-dev__confidential)
 
    - Allows uploading and deploying models trained using Innodisk training tools.
 
