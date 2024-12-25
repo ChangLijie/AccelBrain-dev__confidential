@@ -36,7 +36,8 @@ AcclBrain is a project focused on launching an efficient chatbot by integrating 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/ChangLijie/AccelBrain-dev__confidential.git
+   https://github.com/ChangLijie/AccelBrain-dev__confidential.git
+   cd AccelBrain-dev__confidential
    ```
 
 2. Launch Docker containers:
