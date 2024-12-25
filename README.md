@@ -45,7 +45,7 @@ AcclBrain is a project focused on launching an efficient chatbot by integrating 
    ```bash
    docker compose -f ./docker-compose.yml up -d
    ```
-   - Access the provided URL in a browser to use OpenWeb UI.
+   - Access the provided URL in a browser to use AccelBrain.
         ```
         127.0.0.1:3000
         ```
