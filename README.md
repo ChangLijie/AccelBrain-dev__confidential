@@ -30,7 +30,23 @@ AcclBrain is a project focused on launching an efficient chatbot by integrating 
 * For NVIDIA `dGPU`
   * [NVIDIA GPU Driver](https://docs.nvidia.com/datacenter/tesla/tesla-installation-notes/index.html)
   * [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#step-1-install-nvidia-container-toolkit)
+      * **Prerequisites**
+         * You installed a supported container engine (Docker, Containerd, CRI-O, Podman).
 
+         * You installed the NVIDIA Container Toolkit.
+
+      * **Configuring Docker** 
+
+         1. Configure the container runtime by using the nvidia-ctk command:
+               ```
+               sudo nvidia-ctk runtime configure --runtime=docker
+               ```
+               The nvidia-ctk command modifies the /etc/docker/daemon.json file on the host. The file is updated so that Docker can use the NVIDIA Container Runtime.
+            
+         2. Restart the Docker daemon:
+               ```
+               sudo systemctl restart docker
+            ```
 ### Usage
 
 1. Clone the repository:
