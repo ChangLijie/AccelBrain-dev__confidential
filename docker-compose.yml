@@ -43,7 +43,7 @@ services:
     restart: unless-stopped  
 
   ollama:
-    image: ollama/ollama
+    image: innodiskorg/ollama:v0.1
     container_name: model_server
     runtime: nvidia 
     environment:
