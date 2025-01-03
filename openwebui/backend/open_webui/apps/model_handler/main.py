@@ -3,7 +3,7 @@ import logging
 from typing import Optional
 from urllib.parse import urljoin
 
-from fastapi import FastAPI, Response, UploadFile, status
+from fastapi import Depends, FastAPI, Response, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from open_webui.config import CORS_ALLOW_ORIGIN, MODEL_HANDLER_URL, AppConfig
 from open_webui.env import SRC_LOG_LEVELS
@@ -90,7 +90,7 @@ async def upload(model: Optional[UploadFile] = None):
 
 @app.delete("/model", tags=["Delete Innodisk Model"])
 async def delete_model(
-    request: DeleteModel,
+    request: DeleteModel = Depends(),
 ):
     error_handler = ResponseErrorHandler()
     try:
