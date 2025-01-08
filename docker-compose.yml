@@ -13,7 +13,7 @@ services:
     image: nginx:latest
     container_name: nginx_reverse_proxy
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./setting/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - "80:80" 
     networks:
@@ -47,7 +47,7 @@ services:
     container_name: model_server
     runtime: nvidia 
     environment:
-      - OLLAMA_MAX_LOADED_MODELS=2 
+      - OLLAMA_MAX_LOADED_MODELS=2
     volumes:
       - ./models/ollama:/root/.ollama  
       - ./models/inno:/home      
