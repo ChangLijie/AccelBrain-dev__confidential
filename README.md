@@ -59,14 +59,14 @@ AcclBrain is a project focused on launching an efficient chatbot by integrating 
 2. Launch Docker containers:
 
    ```bash
-   docker compose -f ./docker-compose.yml up -d
+   sudo ./run.sh
    ```
-   - Access the provided URL in a browser to use AccelBrain.
+   - Access the provided URL in a browser to use AccelBrain.(Default)
         ```
         127.0.0.1:3000
         ```
 3. Stop Docker containers
     ```bash
-   docker compose -f ./docker-compose.yml down
+   sudo ./stop.sh
    ```
 
