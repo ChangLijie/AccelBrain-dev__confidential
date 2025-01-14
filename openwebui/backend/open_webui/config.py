@@ -656,7 +656,17 @@ except Exception:
     pass
 
 OPENAI_API_BASE_URL = "https://api.openai.com/v1"
+####################################
+# MODEL_HANDLER
+####################################
 
+MODEL_HANDLER_IP = os.environ.get("MODEL_HANDLER_IP", "127.0.0.1")
+MODEL_HANDLER_PORT = os.environ.get("MODEL_HANDLER_PORT", "5000")
+MODEL_HANDLER_URL = PersistentConfig(
+    "MODEL_HANDLER_BASE_URL",
+    "model_handler_base_urls",
+    f"http://{MODEL_HANDLER_IP}:{MODEL_HANDLER_PORT}/",
+)
 ####################################
 # WEBUI
 ####################################
