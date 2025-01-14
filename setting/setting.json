@@ -1,17 +1,17 @@
 {   
 
     "nginx":{
-        "port":801
+        "port":80
     },
     "open_web_ui":{
-        "port":3002
+        "port":3000
     },
     "ollama":{
-        "port":11435,
+        "port":11434,
         "OLLAMA_MAX_LOADED_MODELS":2
     },
     "model_handler":{
-        "port":5005
+        "port":5000
     }
 
 }
