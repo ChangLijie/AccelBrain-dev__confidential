@@ -1,24 +1,20 @@
-import json
-from typing import Optional, Union
-from pydantic import BaseModel
-from fastapi import APIRouter, Depends, HTTPException, status
 import logging
+from typing import Optional, Union
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from open_webui.apps.retrieval.main import ProcessFileForm, process_file
+from open_webui.apps.retrieval.vector.connector import VECTOR_DB_CLIENT
+from open_webui.apps.webui.models.files import FileModel, Files
 from open_webui.apps.webui.models.knowledge import (
-    Knowledges,
-    KnowledgeUpdateForm,
     KnowledgeForm,
     KnowledgeResponse,
+    Knowledges,
+    KnowledgeUpdateForm,
 )
-from open_webui.apps.webui.models.files import Files, FileModel
-from open_webui.apps.retrieval.vector.connector import VECTOR_DB_CLIENT
-from open_webui.apps.retrieval.main import process_file, ProcessFileForm
-
-
 from open_webui.constants import ERROR_MESSAGES
-from open_webui.utils.utils import get_admin_user, get_verified_user
 from open_webui.env import SRC_LOG_LEVELS
-
+from open_webui.utils.utils import get_admin_user, get_verified_user
+from pydantic import BaseModel
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])
@@ -47,10 +43,42 @@ async def get_knowledge_items(
                 detail=ERROR_MESSAGES.NOT_FOUND,
             )
     else:
-        return [
-            KnowledgeResponse(**knowledge.model_dump())
-            for knowledge in Knowledges.get_knowledge_items()
-        ]
+        knowledge_bases = []
+
+        for knowledge in Knowledges.get_knowledge_items():
+            files = []
+            if knowledge.data:
+                files = Files.get_file_metadatas_by_ids(
+                    knowledge.data.get("file_ids", [])
+                )
+
+                # Check if all files exist
+                if len(files) != len(knowledge.data.get("file_ids", [])):
+                    missing_files = list(
+                        set(knowledge.data.get("file_ids", []))
+                        - set([file.id for file in files])
+                    )
+                    if missing_files:
+                        data = knowledge.data or {}
+                        file_ids = data.get("file_ids", [])
+
+                        for missing_file in missing_files:
+                            file_ids.remove(missing_file)
+
+                        data["file_ids"] = file_ids
+                        Knowledges.update_knowledge_by_id(
+                            id=knowledge.id, form_data=KnowledgeUpdateForm(data=data)
+                        )
+
+                        files = Files.get_file_metadatas_by_ids(file_ids)
+
+            knowledge_bases.append(
+                KnowledgeResponse(
+                    **knowledge.model_dump(),
+                    files=files,
+                )
+            )
+        return knowledge_bases
 
 
 ############################

@@ -1,7 +1,7 @@
-import requests
 import logging
-import ftfy
 
+import ftfy
+import requests
 from langchain_community.document_loaders import (
     BSHTMLLoader,
     CSVLoader,
@@ -15,7 +15,6 @@ from langchain_community.document_loaders import (
     UnstructuredPowerPointLoader,
     UnstructuredRSTLoader,
     UnstructuredXMLLoader,
-    YoutubeLoader,
 )
 from langchain_core.documents import Document
 from open_webui.env import SRC_LOG_LEVELS

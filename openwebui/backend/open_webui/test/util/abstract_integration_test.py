@@ -5,10 +5,9 @@ import time
 import docker
 import pytest
 from docker import DockerClient
-from pytest_docker.plugin import get_docker_ip
 from fastapi.testclient import TestClient
-from sqlalchemy import text, create_engine
-
+from pytest_docker.plugin import get_docker_ip
+from sqlalchemy import create_engine, text
 
 log = logging.getLogger(__name__)
 
@@ -92,8 +91,6 @@ class AbstractPostgresTest(AbstractIntegrationTest):
             db = None
             while retries > 0:
                 try:
-                    from open_webui.config import OPEN_WEBUI_DIR
-
                     db = create_engine(database_url, pool_pre_ping=True)
                     db = db.connect()
                     log.info("postgres is ready!")

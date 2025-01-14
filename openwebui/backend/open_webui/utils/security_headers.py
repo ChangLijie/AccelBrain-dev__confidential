@@ -1,9 +1,9 @@
-import re
 import os
+import re
+from typing import Dict
 
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
-from typing import Dict
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -60,7 +60,7 @@ def set_hsts(value: str):
     pattern = r"^max-age=(\d+)(;includeSubDomains)?(;preload)?$"
     match = re.match(pattern, value, re.IGNORECASE)
     if not match:
-        return "max-age=31536000;includeSubDomains"
+        value = "max-age=31536000;includeSubDomains"
     return {"Strict-Transport-Security": value}
 
 

@@ -1,1 +1,0 @@
-b'{"stream": true, "model": "test:latest", "messages": [{"role": "user", "content": "ss"}], "options": {}, "metadata": {"chat_id": "8624ba41-5ed3-4fec-8438-95d543069d7d", "message_id": "e8f7e07d-7f18-4f8b-9c43-d584db9496ce", "session_id": "OsZ2JhqQJX2uR2-yAAAH", "tool_ids": null, "files": null}}'.

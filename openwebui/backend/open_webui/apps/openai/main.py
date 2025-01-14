@@ -22,7 +22,12 @@ from open_webui.config import (
     AppConfig,
 )
 from open_webui.constants import ERROR_MESSAGES
-from open_webui.env import AIOHTTP_CLIENT_TIMEOUT, SRC_LOG_LEVELS
+from open_webui.env import (
+    AIOHTTP_CLIENT_TIMEOUT,
+    AIOHTTP_CLIENT_TIMEOUT_OPENAI_MODEL_LIST,
+    ENV,
+    SRC_LOG_LEVELS,
+)
 from open_webui.utils.payload import (
     apply_model_params_to_body_openai,
     apply_model_system_prompt_to_body,
@@ -34,7 +39,14 @@ from starlette.background import BackgroundTask
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["OPENAI"])
 
-app = FastAPI()
+
+app = FastAPI(
+    docs_url="/docs" if ENV == "dev" else None,
+    openapi_url="/openapi.json" if ENV == "dev" else None,
+    redoc_url=None,
+)
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ALLOW_ORIGIN,
@@ -175,7 +187,7 @@ async def speech(request: Request, user=Depends(get_verified_user)):
 
 
 async def fetch_url(url, key):
-    timeout = aiohttp.ClientTimeout(total=3)
+    timeout = aiohttp.ClientTimeout(total=AIOHTTP_CLIENT_TIMEOUT_OPENAI_MODEL_LIST)
     try:
         headers = {"Authorization": f"Bearer {key}"}
         async with aiohttp.ClientSession(timeout=timeout, trust_env=True) as session:
@@ -233,9 +245,7 @@ def merge_models_lists(model_lists):
 
 
 def is_openai_api_disabled():
-    api_keys = app.state.config.OPENAI_API_KEYS
-    no_keys = len(api_keys) == 1 and api_keys[0] == ""
-    return no_keys or not app.state.config.ENABLE_OPENAI_API
+    return not app.state.config.ENABLE_OPENAI_API
 
 
 async def get_all_models_raw() -> list:
@@ -423,18 +433,7 @@ async def generate_chat_completion(
 
     # Convert the modified body back to JSON
     payload = json.dumps(payload)
-    s = 0
-    import os
 
-    folder = "./temp"
-    file = "open.txt"
-    file_path = os.path.join(folder, file)
-    while os.path.exists(file_path):
-        file = f"open{s}.txt"
-        file_path = os.path.join(folder, file)
-        s += 1
-    with open(file_path, "w", encoding="utf-8") as file:
-        file.write(f"{payload}\n")
     log.debug(payload)
 
     headers = {}

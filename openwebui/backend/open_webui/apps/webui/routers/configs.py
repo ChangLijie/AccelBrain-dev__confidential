@@ -1,10 +1,7 @@
-from open_webui.config import BannerModel
 from fastapi import APIRouter, Depends, Request
-from pydantic import BaseModel
+from open_webui.config import BannerModel, get_config, save_config
 from open_webui.utils.utils import get_admin_user, get_verified_user
-
-
-from open_webui.config import get_config, save_config
+from pydantic import BaseModel
 
 router = APIRouter()
 

@@ -1,6 +1,11 @@
+import datetime
 import re
+import time
 import uuid
+from typing import Optional
 
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.responses import Response
 from open_webui.apps.webui.models.auths import (
     AddUserForm,
     ApiKey,
@@ -8,6 +13,7 @@ from open_webui.apps.webui.models.auths import (
     SigninForm,
     SigninResponse,
     SignupForm,
+    Token,
     UpdatePasswordForm,
     UpdateProfileForm,
     UserResponse,
@@ -18,10 +24,9 @@ from open_webui.constants import ERROR_MESSAGES, WEBHOOK_MESSAGES
 from open_webui.env import (
     WEBUI_AUTH_TRUSTED_EMAIL_HEADER,
     WEBUI_AUTH_TRUSTED_NAME_HEADER,
+    WEBUI_SESSION_COOKIE_SAME_SITE,
+    WEBUI_SESSION_COOKIE_SECURE,
 )
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import Response
-from pydantic import BaseModel
 from open_webui.utils.misc import parse_duration, validate_email_format
 from open_webui.utils.utils import (
     create_api_key,
@@ -29,8 +34,10 @@ from open_webui.utils.utils import (
     get_admin_user,
     get_current_user,
     get_password_hash,
+    get_verified_user,
 )
 from open_webui.utils.webhook import post_webhook
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -39,23 +46,44 @@ router = APIRouter()
 ############################
 
 
-@router.get("/", response_model=UserResponse)
+class SessionUserResponse(Token, UserResponse):
+    expires_at: Optional[int] = None
+
+
+@router.get("/", response_model=SessionUserResponse)
 async def get_session_user(
     request: Request, response: Response, user=Depends(get_current_user)
 ):
+    expires_delta = parse_duration(request.app.state.config.JWT_EXPIRES_IN)
+    expires_at = None
+    if expires_delta:
+        expires_at = int(time.time()) + int(expires_delta.total_seconds())
+
     token = create_token(
         data={"id": user.id},
-        expires_delta=parse_duration(request.app.state.config.JWT_EXPIRES_IN),
+        expires_delta=expires_delta,
+    )
+
+    datetime_expires_at = (
+        datetime.datetime.fromtimestamp(expires_at, datetime.timezone.utc)
+        if expires_at
+        else None
     )
 
     # Set the cookie token
     response.set_cookie(
         key="token",
         value=token,
+        expires=datetime_expires_at,
         httponly=True,  # Ensures the cookie is not accessible via JavaScript
+        samesite=WEBUI_SESSION_COOKIE_SAME_SITE,
+        secure=WEBUI_SESSION_COOKIE_SECURE,
     )
 
     return {
+        "token": token,
+        "token_type": "Bearer",
+        "expires_at": expires_at,
         "id": user.id,
         "email": user.email,
         "name": user.name,
@@ -71,7 +99,7 @@ async def get_session_user(
 
 @router.post("/update/profile", response_model=UserResponse)
 async def update_profile(
-    form_data: UpdateProfileForm, session_user=Depends(get_current_user)
+    form_data: UpdateProfileForm, session_user=Depends(get_verified_user)
 ):
     if session_user:
         user = Users.update_user_by_id(
@@ -114,7 +142,7 @@ async def update_password(
 ############################
 
 
-@router.post("/signin", response_model=SigninResponse)
+@router.post("/signin", response_model=SessionUserResponse)
 async def signin(request: Request, response: Response, form_data: SigninForm):
     if WEBUI_AUTH_TRUSTED_EMAIL_HEADER:
         if WEBUI_AUTH_TRUSTED_EMAIL_HEADER not in request.headers:
@@ -156,21 +184,36 @@ async def signin(request: Request, response: Response, form_data: SigninForm):
         user = Auths.authenticate_user(form_data.email.lower(), form_data.password)
 
     if user:
+        expires_delta = parse_duration(request.app.state.config.JWT_EXPIRES_IN)
+        expires_at = None
+        if expires_delta:
+            expires_at = int(time.time()) + int(expires_delta.total_seconds())
+
         token = create_token(
             data={"id": user.id},
-            expires_delta=parse_duration(request.app.state.config.JWT_EXPIRES_IN),
+            expires_delta=expires_delta,
+        )
+
+        datetime_expires_at = (
+            datetime.datetime.fromtimestamp(expires_at, datetime.timezone.utc)
+            if expires_at
+            else None
         )
 
         # Set the cookie token
         response.set_cookie(
             key="token",
             value=token,
+            expires=datetime_expires_at,
             httponly=True,  # Ensures the cookie is not accessible via JavaScript
+            samesite=WEBUI_SESSION_COOKIE_SAME_SITE,
+            secure=WEBUI_SESSION_COOKIE_SECURE,
         )
 
         return {
             "token": token,
             "token_type": "Bearer",
+            "expires_at": expires_at,
             "id": user.id,
             "email": user.email,
             "name": user.name,
@@ -186,7 +229,7 @@ async def signin(request: Request, response: Response, form_data: SigninForm):
 ############################
 
 
-@router.post("/signup", response_model=SigninResponse)
+@router.post("/signup", response_model=SessionUserResponse)
 async def signup(request: Request, response: Response, form_data: SignupForm):
     if WEBUI_AUTH:
         if (
@@ -226,16 +269,30 @@ async def signup(request: Request, response: Response, form_data: SignupForm):
         )
 
         if user:
+            expires_delta = parse_duration(request.app.state.config.JWT_EXPIRES_IN)
+            expires_at = None
+            if expires_delta:
+                expires_at = int(time.time()) + int(expires_delta.total_seconds())
+
             token = create_token(
                 data={"id": user.id},
-                expires_delta=parse_duration(request.app.state.config.JWT_EXPIRES_IN),
+                expires_delta=expires_delta,
+            )
+
+            datetime_expires_at = (
+                datetime.datetime.fromtimestamp(expires_at, datetime.timezone.utc)
+                if expires_at
+                else None
             )
 
             # Set the cookie token
             response.set_cookie(
                 key="token",
                 value=token,
+                expires=datetime_expires_at,
                 httponly=True,  # Ensures the cookie is not accessible via JavaScript
+                samesite=WEBUI_SESSION_COOKIE_SAME_SITE,
+                secure=WEBUI_SESSION_COOKIE_SECURE,
             )
 
             if request.app.state.config.WEBHOOK_URL:
@@ -252,6 +309,7 @@ async def signup(request: Request, response: Response, form_data: SignupForm):
             return {
                 "token": token,
                 "token_type": "Bearer",
+                "expires_at": expires_at,
                 "id": user.id,
                 "email": user.email,
                 "name": user.name,
@@ -262,6 +320,12 @@ async def signup(request: Request, response: Response, form_data: SignupForm):
             raise HTTPException(500, detail=ERROR_MESSAGES.CREATE_USER_ERROR)
     except Exception as err:
         raise HTTPException(500, detail=ERROR_MESSAGES.DEFAULT(err))
+
+
+@router.get("/signout")
+async def signout(response: Response):
+    response.delete_cookie("token")
+    return {"status": True}
 
 
 ############################

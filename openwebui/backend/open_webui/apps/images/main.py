@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Optional
 
 import requests
+from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from open_webui.apps.images.utils.comfyui import (
     ComfyUIGenerateImageForm,
     ComfyUIWorkflow,
@@ -35,11 +37,9 @@ from open_webui.config import (
     AppConfig,
 )
 from open_webui.constants import ERROR_MESSAGES
-from open_webui.env import SRC_LOG_LEVELS
-from fastapi import Depends, FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from open_webui.env import ENV, SRC_LOG_LEVELS
 from open_webui.utils.utils import get_admin_user, get_verified_user
+from pydantic import BaseModel
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["IMAGES"])
@@ -47,7 +47,12 @@ log.setLevel(SRC_LOG_LEVELS["IMAGES"])
 IMAGE_CACHE_DIR = Path(CACHE_DIR).joinpath("./image/generations/")
 IMAGE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-app = FastAPI()
+app = FastAPI(
+    docs_url="/docs" if ENV == "dev" else None,
+    openapi_url="/openapi.json" if ENV == "dev" else None,
+    redoc_url=None,
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ALLOW_ORIGIN,
@@ -277,7 +282,6 @@ async def get_image_config(user=Depends(get_admin_user)):
 
 @app.post("/image/config/update")
 async def update_image_config(form_data: ImageConfigForm, user=Depends(get_admin_user)):
-
     set_image_model(form_data.MODEL)
 
     pattern = r"^\d+x\d+$"
