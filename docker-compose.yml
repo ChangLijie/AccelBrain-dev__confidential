@@ -66,6 +66,7 @@ services:
   open_webui:
     image: innodiskorg/open-webui
     container_name: open_webui
+    environment:
       - OLLAMA_BASE_URL=http://model_server:11434
     networks:
       accelbrain_network:
