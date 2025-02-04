@@ -42,3 +42,4 @@ echo -e "\nAccelbrain started!"
 mkdir -p "$OPEN_WEB_UI_LOG_DIR"
 
 nohup bash -c "docker logs -f open_webui 2>&1 | split -b 5M -d --filter='sh -c \"cat > ${OPEN_WEB_UI_LOG_DIR}/${OPEN_WEB_UI_LOG_FILE}\"'" > /dev/null 2>&1 &
+echo -e "\n🚀 AccelBrain is running at: http://127.0.0.1:${OPEN_WEB_UI_PORT}\n"
