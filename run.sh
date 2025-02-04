@@ -10,7 +10,7 @@ source "${ROOT}/setting/utils/tools.sh"
 NGINX_CONF="${ROOT}/setting/nginx.conf"
 CONF="${ROOT}/setting/setting.json"
 COMPOSE="${ROOT}/docker-compose.yml"
-OPEN_WEB_UI_LOG_DIR="./open_web_ui"
+OPEN_WEB_UI_LOG_DIR="./openwebui/log"
 OPEN_WEB_UI_LOG_FILE="openwebui.log"
 # Check configuration is exit
 check_config ${CONF}
