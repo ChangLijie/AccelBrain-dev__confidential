@@ -15,7 +15,7 @@ services:
     volumes:
       - ./setting/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "6539:80" 
+      - "6589:80" 
     networks:
       accelbrain_network:
         ipv4_address: 192.168.1.10
@@ -60,7 +60,7 @@ services:
     restart: unless-stopped 
 
   open_webui:
-    image: innodiskorg/open-webui
+    image: innodiskorg/open-webui:v0.1
     container_name: open_webui
     environment:
       - MODEL_HANDLER_IP=model_handler
