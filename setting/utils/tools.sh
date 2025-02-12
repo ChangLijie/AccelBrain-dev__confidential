@@ -25,7 +25,6 @@ function printd(){
 
     echo -e "$(date +"%y:%m:%d %T") ${COLOR}$1${REST}"
 }
-
 function check_config(){
 	CONF=$1
 	FLAG=$(ls ${CONF} 2>/dev/null)
@@ -38,15 +37,16 @@ function check_jq(){
 	# Install pre-requirement
 	if [[ -z $(which jq) ]];then
 		printd "Installing jq for parsing JSON configuration .... " Cy
-		# sudo apt-get install jq -yqq
-		BASEDIR=$(dirname $0)
-		chmod u+x ${BASEDIR}/tools/install-jq.sh
-		${BASEDIR}/tools/install-jq.sh
+        # sudo apt-get install jq -yqq
+        FILE=$(realpath "$0")
+        ROOT=$(dirname "${FILE}")
+        chmod u+x ${ROOT}/setting/utils/tools/install-jq.sh
+        ${ROOT}/setting/utils/tools/install-jq.sh
 
-		if [[ -z $(which jq) ]];then
-			printd "Install jq failed" R
-			exit 1
-		fi
+        if [[ -z $(which jq) ]];then
+            printd "Install jq failed" R
+            exit 1
+        fi
 	fi
 }
 
