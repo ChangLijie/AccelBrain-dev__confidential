@@ -16,7 +16,7 @@ jobs:
         id: changelog
         run: |
           CHANGELOG_CONTENT=$(awk 'BEGIN {print_section=0;} /^## \[/ {if (print_section == 0) {print_section=1;} else {exit;}} print_section {print;}' CHANGELOG.md)
-          VERSION=$(echo "$CHANGELOG_CONTENT" | grep -oP '(?<=## \[v)[^]]+')
+          VERSION=$(echo "$CHANGELOG_CONTENT" | grep -oP '(?<=## \[)[^]]+')
           echo "Extracted latest release notes from CHANGELOG.md:"
           echo "$CHANGELOG_CONTENT"
           echo "Version: $VERSION"
