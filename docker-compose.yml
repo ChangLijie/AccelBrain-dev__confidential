@@ -60,7 +60,7 @@ services:
     restart: unless-stopped 
 
   open_webui:
-    image: innodiskorg/open-webui:v0.3
+    image: innodiskorg/open-webui:vtest
     container_name: open_webui
     environment:
       - MODEL_HANDLER_IP=model_handler
