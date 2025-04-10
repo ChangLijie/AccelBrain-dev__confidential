@@ -16,9 +16,10 @@ jobs:
         id: changelog
         run: |
 
-          CHANGELOG_CONTENT=$(awk 'BEGIN {print_section=0;} /^## \[/ {if (print_section == 0) {print_section=1;} else {exit;}} print_section {print;}' CHANGELOG.md)
+          CHANGELOG_CONTENT=$(awk 'BEGIN {print_section=0;} /^## \[/ {if (print_section == 0) {print_section=1;} else {exit;} } print_section {print;}' CHANGELOG.md)
 
-          VERSION=$(echo "$CHANGELOG_CONTENT" | grep -oP '(?<=## \[)v[0-9]+\.[0-9]+(?:\.[0-9]+)?(?=\])')
+          # 改用 sed 提取版本號
+          VERSION=$(echo "$CHANGELOG_CONTENT" | sed -n 's/^## \[\(v[0-9]\+\.[0-9]\+\(\.[0-9]\+\)*\)\].*/\1/p')
 
           CHANGELOG_ESCAPED=$(echo "$CHANGELOG_CONTENT" | sed ':a;N;$!ba;s/\n/%0A/g')
 
