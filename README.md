@@ -1,22 +1,22 @@
-# AcclBrain
+# AccelBrain
 
-AcclBrain is a project focused on launching an efficient chatbot by integrating multiple powerful frameworks and tools. The architecture combines ChatBot, Ollama, and Model Handler to ensure seamless operation and optimized performance.
+AccelBrain is a project focused on launching an efficient chatbot by integrating multiple powerful frameworks and tools. The architecture combines ChatBot, Model Server, and Model Handler to ensure seamless operation and optimized performance.
 
-## The architecture of AcclBrain is designed as follows:
+## The architecture of AccelBrain is designed as follows:
 
-![](./docs/architecture.svg)
+![](./docs/accelbrain.svg)
 
-1. [**ChatBot**](https://github.com/open-webui/open-webui)
+1. [**ChatBot**]
 
    -  Provides the user interaction interface.
 
-2. [**Ollama**](https://github.com/ollama/ollama)
+2. [**Model Server**]
 
    -  Handles efficient model requests, managing load distribution and resource allocation.
 
-3. [**Model Handler**](https://github.com/ChangLijie/model_handler-dev__confidential)
+3. [**Model Handler**]
 
-   - Allows uploading and deploying models trained using Innodisk training tools.
+   - Allows uploading and deploying models trained using Innodisk training tools (AccelTune).
 
 ## Installation and Usage
 
