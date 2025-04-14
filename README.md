@@ -6,15 +6,15 @@ AccelBrain is a project focused on launching an efficient chatbot by integrating
 
 ![](./docs/accelbrain.svg)
 
-1. [**ChatBot**]
+1. **ChatBot**
 
    -  Provides the user interaction interface.
 
-2. [**Model Server**]
+2. **Model Server**
 
    -  Handles efficient model requests, managing load distribution and resource allocation.
 
-3. [**Model Handler**]
+3. **Model Handler**
 
    - Allows uploading and deploying models trained using Innodisk training tools (AccelTune).
 
