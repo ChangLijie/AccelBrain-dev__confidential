@@ -3,11 +3,11 @@
     "nginx":{
         "port":6589
     },
-    "open_web_ui":{
+    "chatbot":{
         "port":3000
     },
-    "ollama":{
-        "OLLAMA_MAX_LOADED_MODELS":2
+    "model_server":{
+        "MODEL_SERVER_MAX_LOADED_MODELS":3
     }
 
 }

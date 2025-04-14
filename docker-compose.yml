@@ -21,8 +21,8 @@ services:
         ipv4_address: 192.168.1.10
     depends_on:
       - model_handler
-      - ollama
-      - open_webui
+      - model_server
+      - chatbot
     restart: unless-stopped
 
   model_handler:
@@ -40,12 +40,12 @@ services:
         ipv4_address: 192.168.1.20  
     restart: unless-stopped  
 
-  ollama:
+  model_server:
     image: innodiskorg/ollama:v0.1
     container_name: model_server
     runtime: nvidia 
     environment:
-      - OLLAMA_MAX_LOADED_MODELS=2
+      - OLLAMA_MAX_LOADED_MODELS=3
     volumes:
       - ./models/ollama:/root/.ollama  
       - ./models/inno:/home      
@@ -59,21 +59,21 @@ services:
             - capabilities: [gpu]  
     restart: unless-stopped 
 
-  open_webui:
-    image: innodiskorg/open-webui:v0.1
-    container_name: open_webui
+  chatbot:
+    image: innodiskorg/open-webui:v0.3
+    container_name: chatbot
     environment:
       - MODEL_HANDLER_IP=model_handler
       - MODEL_HANDLER_PORT=5000
       - OLLAMA_BASE_URL=http://model_server:11434
     volumes:
-      - ./openwebui/data:/app/backend/data
+      - ./chatbot/data:/app/backend/data
     networks:
       accelbrain_network:
-        ipv4_address: 192.168.1.40  # open_webui 的固定 IP
+        ipv4_address: 192.168.1.40  # 
     ports:
       - "3000:8080" 
     depends_on:
-      - ollama
+      - model_server
       - model_handler
     restart: unless-stopped
