@@ -68,6 +68,7 @@ services:
       - OLLAMA_BASE_URL=http://model_server:11434
     volumes:
       - ./chatbot/data:/app/backend/data
+      - ./CHANGELOG.md:/app/CHANGELOG.md
     networks:
       accelbrain_network:
         ipv4_address: 192.168.1.40  # 
