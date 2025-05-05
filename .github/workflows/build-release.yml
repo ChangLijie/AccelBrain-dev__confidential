@@ -36,7 +36,7 @@ jobs:
       - name: Prepare release zip
         run: |
           mkdir release
-          cp AccelBrainLauncher.exe Setting.exe ShutDown.exe run_compose.sh run.sh stop.sh docker-compose.yml CHANGELOG.md README.md release/
+          cp AccelBrainLauncher Setting ShutDown run_compose.sh run.sh stop.sh docker-compose.yml CHANGELOG.md README.md release/
           cp -r setting release/
           zip -r release.zip release/
 
