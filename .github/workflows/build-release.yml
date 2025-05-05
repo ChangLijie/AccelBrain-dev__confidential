@@ -13,11 +13,7 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          export DEBIAN_FRONTEND=noninteractive
-          export TZ=Asia/Taipei
-          apt-get update
-          apt-get install -y tzdata python3 python3-pip zip curl git
-          pip3 install --upgrade pip
+        
           pip3 install pyinstaller
 
       - name: Checkout repository
