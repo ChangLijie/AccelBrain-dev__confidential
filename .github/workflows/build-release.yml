@@ -7,8 +7,8 @@ jobs:
   build-and-zip:
     strategy:
       matrix:
-        version: ["20.04", "22.04"]
-    runs-on: ubuntu-${{ matrix.version }}
+        version: ["22.04"]
+    runs-on: ubuntu
 
     steps:
       - name: Install dependencies
@@ -16,8 +16,7 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive
           ln -fs /usr/share/zoneinfo/Asia/Taipei /etc/localtime
           apt-get update
-          apt-get install -y tzdata python3 python3-pip python3-tk zip curl git
-          dpkg-reconfigure -f noninteractive tzdata
+          apt-get install -y python3 python3-pip zip curl git
           pip3 install --upgrade pip
           pip3 install pyinstaller
 
@@ -36,22 +35,21 @@ jobs:
 
       - name: Build executables with PyInstaller
         run: |
-          pyinstaller launch.py --name AccelBrainLauncher --noconfirm --onefile --clean --distpath .
-          pyinstaller port_setting.py --name Setting --noconfirm --onefile --clean --distpath .
-          pyinstaller shut_down.py --name ShutDown --noconfirm --onefile --clean --distpath .
+          pyinstaller install.py --name Install --noconfirm --onefile --clean --distpath .
 
       - name: Prepare release zip
         run: |
           mkdir release
-          cp AccelBrainLauncher Setting ShutDown run_compose.sh run.sh stop.sh docker-compose.yml CHANGELOG.md README.md release/
+          cp Install launch.py port_setting.py shut_down.py run_compose.sh run.sh stop.sh docker-compose.yml CHANGELOG.md README.md release/
           cp -r setting release/
-          zip -r release-ubuntu-${{ matrix.version }}.zip release/
+          cp -r tools release/
+          zip -r release-ubuntu.zip release/
 
       - name: Upload artifact for ${{ matrix.version }}
         uses: actions/upload-artifact@v4
         with:
-          name: release-ubuntu-${{ matrix.version }}
-          path: release-ubuntu-${{ matrix.version }}.zip
+          name: release-ubuntu
+          path: release-ubuntu.zip
 
   create-release:
     needs: build-and-zip
@@ -83,6 +81,5 @@ jobs:
           name: ${{ steps.changelog.outputs.version }}
           body: ${{ steps.changelog.outputs.content }}
           files: |
-            artifacts/release-ubuntu-16.04/release-ubuntu-16.04.zip
-            artifacts/release-ubuntu-20.04/release-ubuntu-20.04.zip
-            artifacts/release-ubuntu-22.04/release-ubuntu-22.04.zip
+            artifacts/release-ubuntu/release-ubuntu.zip
+            
