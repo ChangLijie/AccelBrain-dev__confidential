@@ -1,3 +1,5 @@
+name: Release AccelBrain
+
 on:
   workflow_dispatch:
 
@@ -9,46 +11,40 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk
+          pip install pyinstaller
+
       - name: Extract latest CHANGELOG entry and version
         id: changelog
         run: |
           CHANGELOG_CONTENT=$(awk 'BEGIN {print_section=0;} /^## \[/ {if (print_section == 0) {print_section=1;} else {exit;}} print_section {print;}' CHANGELOG.md)
           VERSION=$(echo "$CHANGELOG_CONTENT" | grep -oP '(?<=## \[)[^]]+')
-          echo "Extracted latest release notes from CHANGELOG.md:"
-          echo "$CHANGELOG_CONTENT"
-          echo "Version: $VERSION"
-
           echo "content<<EOF" >> $GITHUB_OUTPUT
           echo "$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
           echo "version=v$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Build executables with PyInstaller
+        run: |
+          pyinstaller launch.py --name AccelBrainLauncher --noconfirm --onefile --clean --distpath .
+          pyinstaller port_setting.py --name Setting --noconfirm --onefile --clean --distpath .
+          pyinstaller shut_down.py --name ShutDown --noconfirm --onefile --clean --distpath .
+
+      - name: Prepare release zip
+        run: |
+          mkdir release
+          cp AccelBrainLauncher.exe Setting.exe ShutDown.exe run_compose.sh run.sh stop.sh docker-compose.yml CHANGELOG.md README.md release/
+          cp -r setting release/
+          zip -r release.zip release/
 
       - name: Create GitHub release
         id: create_release
-        uses: actions/github-script@v7
+        uses: softprops/action-gh-release@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const changelog = `${{ steps.changelog.outputs.content }}`;
-            const version = `${{ steps.changelog.outputs.version }}`;
-
-            const release = await github.rest.repos.createRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: version,
-              name: version,
-              body: changelog,
-            });
-            console.log(`Created release ${release.data.html_url}`);
-
-      - name: Upload package to GitHub release
-        uses: actions/upload-artifact@v4
-        with:
-          name: package
-          path: |
-            .
-            !.git
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ steps.changelog.outputs.version }}
+          name: ${{ steps.changelog.outputs.version }}
+          body: ${{ steps.changelog.outputs.content }}
+          files: release.zip
