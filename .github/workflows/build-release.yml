@@ -4,18 +4,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
+  build-and-zip:
+    strategy:
+      matrix:
+        version: ["20.04", "22.04"]
+    runs-on: ubuntu-${{ matrix.version }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-tk
-          pip install pyinstaller
+          export DEBIAN_FRONTEND=noninteractive
+          ln -fs /usr/share/zoneinfo/Asia/Taipei /etc/localtime
+          apt-get update
+          apt-get install -y tzdata python3 python3-pip python3-tk zip curl git
+          dpkg-reconfigure -f noninteractive tzdata
+          pip3 install --upgrade pip
+          pip3 install pyinstaller
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Extract latest CHANGELOG entry and version
         id: changelog
@@ -38,13 +45,44 @@ jobs:
           mkdir release
           cp AccelBrainLauncher Setting ShutDown run_compose.sh run.sh stop.sh docker-compose.yml CHANGELOG.md README.md release/
           cp -r setting release/
-          zip -r release.zip release/
+          zip -r release-ubuntu-${{ matrix.version }}.zip release/
+
+      - name: Upload artifact for ${{ matrix.version }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-ubuntu-${{ matrix.version }}
+          path: release-ubuntu-${{ matrix.version }}.zip
+
+  create-release:
+    needs: build-and-zip
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract latest CHANGELOG entry and version
+        id: changelog
+        run: |
+          CHANGELOG_CONTENT=$(awk 'BEGIN {print_section=0;} /^## \[/ {if (print_section == 0) {print_section=1;} else {exit;}} print_section {print;}' CHANGELOG.md)
+          VERSION=$(echo "$CHANGELOG_CONTENT" | grep -oP '(?<=## \[)[^]]+')
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
 
       - name: Create GitHub release
-        id: create_release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.changelog.outputs.version }}
           name: ${{ steps.changelog.outputs.version }}
           body: ${{ steps.changelog.outputs.content }}
-          files: release.zip
+          files: |
+            artifacts/release-ubuntu-16.04/release-ubuntu-16.04.zip
+            artifacts/release-ubuntu-20.04/release-ubuntu-20.04.zip
+            artifacts/release-ubuntu-22.04/release-ubuntu-22.04.zip
