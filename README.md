@@ -57,17 +57,30 @@ AccelBrain is a project focused on launching an efficient chatbot by integrating
    ```
 
 2. Launch Docker containers:
-
-   ```bash
-   sudo ./run.sh
-   ```
+   * (Recommended) GUI executable: (Double-click AccelBrainLauncher.exe or run)
+      ```bash
+      ./AccelBrainLauncher.exe
+      ```
+   * Shell script 
+      ```bash
+      sudo ./run.sh
+      ```
    - Access the provided URL in a browser to use AccelBrain.(Default)
         ```
         127.0.0.1:3000
         ```
 3. Stop Docker containers
-    ```bash
-   sudo ./stop.sh
-   ```
-
+   * (Recommended) GUI executable: (Double-click ShutDown.exe or run)
+      ```bash
+      ./ShutDown.exe
+      ```
+   * Shell script 
+      ```bash
+      sudo ./stop.sh
+      ```
+4. Optional - Modify startup parameters via GUI
+   * (Recommended) GUI executable: (Double-click Setting.exe or run)
+      ```bash
+      ./Setting.exe
+      ```
  
