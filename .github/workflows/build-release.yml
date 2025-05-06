@@ -5,12 +5,8 @@ on:
 
 jobs:
   build-and-zip:
-    strategy:
-      matrix:
-        version: ["22.04"]
-    runs-on: ubuntu-${{ matrix.version }}
-    container:
-     image: ubuntu:20.04
+
+    runs-on: self-hosted
 
     steps:
       - name: Install dependencies
@@ -22,9 +18,16 @@ jobs:
           apt-get install -y tzdata
           dpkg-reconfigure -f noninteractive tzdata
 
-          apt-get install -y python3 python3-pip python3-tk curl git zip
-          pip3 install --upgrade pip
-          pip3 install pyinstaller
+          # 檢查是否有 python3 / pip3 / zip / git 等，沒有才安裝
+          if ! command -v python3 >/dev/null; then apt-get install -y python3; fi
+          if ! command -v pip3 >/dev/null; then apt-get install -y python3-pip; fi
+          if ! command -v zip >/dev/null; then apt-get install -y zip; fi
+          if ! command -v git >/dev/null; then apt-get install -y git; fi
+          if ! dpkg -s python3-tk >/dev/null 2>&1; then apt-get install -y python3-tk; fi
+
+          # 檢查 PyInstaller 是否已安裝
+          if ! pip3 show pyinstaller >/dev/null 2>&1; then pip3 install --upgrade pip && pip3 install pyinstaller; fi
+
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -51,7 +54,7 @@ jobs:
           cp -r tools release/
           zip -r release-ubuntu.zip release/
 
-      - name: Upload artifact for ${{ matrix.version }}
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-ubuntu
