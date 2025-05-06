@@ -1,31 +1,8 @@
 import subprocess
-import sys
 
-print("🚀 正在開始打包 AccelBrainLauncher（含 tkinter GUI）...\n")
-
-# 自動安裝 pyinstaller（如果沒裝）
-try:
-    import PyInstaller
-except ImportError:
-    subprocess.call([sys.executable, "-m", "pip", "install", "pyinstaller"])
-
-result = subprocess.call(
-    [
-        sys.executable,
-        "-m",
-        "PyInstaller",
-        "launch.py",
-        "--name",
-        "AccelBrainLauncher",
-        "--noconfirm",
-        "--onefile",
-        "--clean",
-        "--distpath",
-        ".",
-    ]
-)
+result = subprocess.call(["bash", "./install.sh"])
 
 if result == 0:
-    print("\n✅ 打包完成！請執行 dist/AccelBrainLauncher.exe")
+    print("\n✅ 打包完成！請執行 AccelBrainLauncher")
 else:
     print("\n❌ 打包失敗，請檢查錯誤訊息")
