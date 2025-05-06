@@ -43,10 +43,12 @@ jobs:
       - name: Prepare release zip
         run: |
           mkdir release
-          cp Installer launch.py port_setting.py shut_down.py run_compose.sh run.sh stop.sh docker-compose.yml CHANGELOG.md README.md release/
+          cp Installer install.sh launch.py port_setting.py shut_down.py run_compose.sh run.sh stop.sh docker-compose.yml CHANGELOG.md README.md release/
           cp -r setting release/
           cp -r tools release/
-          zip -r release-ubuntu.zip release/
+          cd release
+          zip -r ../release-ubuntu.zip .
+          cd ..
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
