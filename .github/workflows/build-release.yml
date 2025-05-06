@@ -9,6 +9,8 @@ jobs:
       matrix:
         version: ["22.04"]
     runs-on: ubuntu-${{ matrix.version }}
+    container:
+     image: ubuntu:20.04
 
     steps:
       - name: Install dependencies
