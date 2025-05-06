@@ -38,14 +38,15 @@ jobs:
 
       - name: Build executables with PyInstaller
         run: |
-          pyinstaller install.py --name Install --noconfirm --onefile --clean --distpath .
+          pyinstaller launch.py --name AccelBrainLauncher --onefile --clean --distpath .
+          pyinstaller port_setting.py --name Setting --onefile --clean --distpath .
+          pyinstaller shut_down.py --name ShutDown --onefile --clean --distpath .
 
       - name: Prepare release zip
         run: |
           mkdir release
-          cp Install launch.py port_setting.py shut_down.py run_compose.sh run.sh stop.sh docker-compose.yml CHANGELOG.md README.md release/
+          cp AccelBrainLauncher Setting ShutDown run_compose.sh run.sh stop.sh docker-compose.yml CHANGELOG.md README.md release/
           cp -r setting release/
-          cp -r tools release/
           zip -r release-ubuntu.zip release/
 
       - name: Upload artifact
