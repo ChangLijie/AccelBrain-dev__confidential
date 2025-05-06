@@ -11,12 +11,6 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo export DEBIAN_FRONTEND=noninteractive
-          echo "Asia/Taipei" > /etc/timezone
-          sudo ln -fs /usr/share/zoneinfo/Asia/Taipei /etc/localtime
-          apt-get update
-          apt-get install -y tzdata
-          sudo dpkg-reconfigure -f noninteractive tzdata
 
           # 檢查是否有 python3 / pip3 / zip / git 等，沒有才安裝
           if ! command -v python3 >/dev/null; then apt-get install -y python3; fi
