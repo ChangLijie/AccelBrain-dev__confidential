@@ -6,7 +6,8 @@ from tkinter import messagebox
 from typing import Dict, Tuple
 
 from tools.checker.port_checker import is_port_in_use
-from tools.utils import auto_install_dependencies
+
+# from tools.utils import auto_install_dependencies
 
 
 def check_and_color(entry: tk.Entry, label: tk.Label) -> bool:
@@ -114,7 +115,7 @@ def save_settings_to_file(settings: dict, path: str = "setting/setting.json"):
 
 
 def show_port_edit_dialog(settings):
-    auto_install_dependencies()
+    # auto_install_dependencies()
     updated = False
     root = tk.Tk()
     root.title("Setting")

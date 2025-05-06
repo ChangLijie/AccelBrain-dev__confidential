@@ -5,7 +5,9 @@ import tkinter as tk
 from tkinter import scrolledtext
 
 from tools.gui.log_buffer import set_log_handler
-from tools.utils import DotDict, auto_install_dependencies
+from tools.utils import DotDict
+
+# from tools.utils import DotDict, auto_install_dependencies
 
 SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 
@@ -103,7 +105,7 @@ def load_theme():
 
 
 def stop_accelbrain(root_path: str, log_func):
-    auto_install_dependencies(log_func)
+    # auto_install_dependencies(log_func)
     log_func("🧹 Stopping existing AccelBrain containers...\n")
     stop_sh_path = os.path.join(root_path, "stop.sh")
     run_and_stream(["bash", stop_sh_path], log_func)

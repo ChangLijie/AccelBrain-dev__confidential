@@ -13,7 +13,9 @@ from tools.checker.port_checker import check_ports
 from tools.gui.log_buffer import set_log_handler
 from tools.gui.port_dialog import show_port_edit_dialog
 from tools.modifier.setting_modifier import load_settings, update_ports_and_env
-from tools.utils import DotDict, auto_install_dependencies
+from tools.utils import DotDict
+
+# from tools.utils import DotDict, auto_install_dependencies
 
 SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 
@@ -138,7 +140,7 @@ def load_theme():
 
 
 def run_check_sequence(root, root_path, check_function, status_labels, log_func):
-    auto_install_dependencies(log_func)
+    # auto_install_dependencies(log_func)
 
     def spinner_loop():
         i = 0
