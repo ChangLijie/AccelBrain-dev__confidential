@@ -41,7 +41,7 @@ services:
     restart: unless-stopped  
 
   model_server:
-    image: innodiskorg/ollama:v0.2
+    image: innodiskorg/ollama:v0.3
     container_name: model_server
     runtime: nvidia 
     environment:
@@ -60,7 +60,7 @@ services:
     restart: unless-stopped 
 
   chatbot:
-    image: innodiskorg/open-webui:v0.4.2
+    image: innodiskorg/open-webui:v0.4.5
     container_name: chatbot
     environment:
       - MODEL_HANDLER_IP=model_handler
