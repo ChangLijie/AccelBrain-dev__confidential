@@ -60,7 +60,7 @@ services:
     restart: unless-stopped 
 
   chatbot:
-    image: innodiskorg/open-webui:v0.4.6
+    image: innodiskorg/open-webui:v0.4.7
     container_name: chatbot
     environment:
       - MODEL_HANDLER_IP=model_handler

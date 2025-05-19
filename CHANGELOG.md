@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.4] - 2025-05-08
 
 ### Fixed
+- **Update the chatbot to v0.4.7**
 
-- **Update the chatbot to v0.4.6**
 
 
 ## [1.0.3] - 2025-04-28
